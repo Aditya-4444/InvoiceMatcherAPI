@@ -1,0 +1,4 @@
+<Solution>
+  <Project Path="InvoiceMatcher/InvoiceMatcher.csproj" />
+  <Project Path="InvoiceMatcher.Tests/InvoiceMatcher.Tests.csproj" />
+</Solution>

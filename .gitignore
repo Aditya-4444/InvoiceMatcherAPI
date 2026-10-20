@@ -1,0 +1,11 @@
+bin/
+obj/
+.vs/
+*.user
+*.db
+*.db-shm
+*.db-wal
+data/inbox/*
+!data/inbox/.gitkeep
+data/archive/*
+data/failed/*

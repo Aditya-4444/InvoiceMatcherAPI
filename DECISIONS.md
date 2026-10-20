@@ -1,0 +1,8 @@
+- In-process bounded `Channel` instead of RabbitMQ or Service Bus: the brief requires `dotnet run` with no infrastructure. The cost is that queued work is lost on a crash, which the startup inbox scan recovers.
+- SQLite with EF Core migrations instead of SQL Server: a single portable file on every OS. Decimals are stored as text, so amounts are compared in memory rather than in SQL.
+- Idempotency uses a SHA-256 of the file content with a unique index, not the file name, so renamed or re-dropped copies are skipped. A name-based key would process the same invoice twice.
+- Only unexpected exceptions are retried (3 attempts in total, delay grows per attempt). Ambiguous, unmatched and unreadable outcomes are deterministic, so retrying would give the same result.
+- Processed files leave the inbox: Anything the service finished with a result (Matched, Unmatched, or an Exception such as ambiguous or unreadable) goes to `data/archive`. Only a file that throws on every retry goes to `data/failed`. The inbox only ever holds work still to do. A name clash in the target folder gets a timestamp suffix and `SourceFileRef` is updated to the new name.
+- One consumer processes files one at a time. This removes races on the hash check, and volume does not need more.
+- An invoice links to at most one PO, as specified. Several open POs with the same vendor and amount become an exception that lists the candidates, rather than a guess.
+- Runtime data lives in a top-level `data/` folder, not inside the project, because `data/` and the `Data/` code folder are the same directory on Windows and macOS.
